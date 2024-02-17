@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "tg-chat-bot"
+version = "0.1.0"
+description = ""
+authors = ["Kom46 <kommunizm46@gmail.com>"]
+readme = "README.md"
+packages = [{include = "tg_chat_bot"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
