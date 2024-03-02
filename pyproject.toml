@@ -12,6 +12,8 @@ aiogram = "^3.4.1"
 pyqt5 = "=5.15.10"   
 pyqt5-qt5 = "=5.15.2"
 opentele = "^1.15.1"
+flake8 = "^7.0.0"
+black = "^24.2.0"
 
 
 [build-system]

@@ -1,5 +1,8 @@
 from aiogram import Bot, Router, filters
-
+from opentele.tl import TelegramClient
+from opentele.td import TDesktop
+from opentele.api import UseCurrentSession, CreateNewSession
+from telethon import events 
 
 import json as js
 from typing import Dict
@@ -43,3 +46,30 @@ class aiogramChatBot:
         self.__commands = callbacks
         for key, val in self.__commands.items():
             self.router.message.register(val, filters.Command(key))
+
+
+class openteleChatBot(TelegramClient):
+    __desktop: TDesktop
+
+    @property
+    def desktop(self):
+        return self.__desktop
+
+    async def __init__(self, tdata: str = ""):
+        if tdata == "":
+            self.__desktop = TDesktop()
+        else:
+            self.__desktop = TDesktop(tdata)
+        if (not self.__desktop.isLoaded()) or (not (self.__desktop.accountsCount > 0)):
+            raise Exception("Bad tdata")
+        else:
+            client = await self.__desktop.ToTelethon(session="telethon.session", flag=UseCurrentSession)
+            try:
+                client.connect()
+            except OSError:
+                print("Connection error")
+   
+
+    def init_commands(self, callbacks: Dict[str, any]) -> None:
+        for key, val in callbacks.items():
+            self.add_event_handler(val, events.NewMessage(pattern=key))
