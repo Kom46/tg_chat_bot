@@ -57,7 +57,9 @@ class openteleChatBot(TelegramClient):
         return self.__desktop
     
     @property
-
+    def tdata(self):
+        return self.__tdata
+    
     async def __init__(self, tdata: str = "") -> None:
         if self.test_tdata(tdata):
             self.__tdata = tdata
