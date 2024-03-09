@@ -50,26 +50,38 @@ class aiogramChatBot:
 
 class openteleChatBot(TelegramClient):
     __desktop: TDesktop
+    __tdata: str
 
     @property
     def desktop(self):
         return self.__desktop
+    
+    @property
 
-    async def __init__(self, tdata: str = ""):
-        if tdata == "":
-            self.__desktop = TDesktop()
-        else:
+    async def __init__(self, tdata: str = "") -> None:
+        if self.test_tdata(tdata):
+            self.__tdata = tdata
             self.__desktop = TDesktop(tdata)
-        if (not self.__desktop.isLoaded()) or (not (self.__desktop.accountsCount > 0)):
-            raise Exception("Bad tdata")
+            self.__client = await self.__desktop.ToTelethon(session="telethon.session", flag=UseCurrentSession)
         else:
-            client = await self.__desktop.ToTelethon(session="telethon.session", flag=UseCurrentSession)
-            try:
-                client.connect()
-            except OSError:
-                print("Connection error")
+            raise Exception("tdata is not valid")
    
 
     def init_commands(self, callbacks: Dict[str, any]) -> None:
         for key, val in callbacks.items():
             self.add_event_handler(val, events.NewMessage(pattern=key))
+            
+    async def test_tdata(self, tdata: str) -> bool:
+        desktop = TDesktop(tdata)
+        # if it is loaded and accounts more then 0 then try to connect
+        result = desktop.isLoaded() and (desktop.accountsCount > 0)
+        if result:
+            client = await desktop.ToTelethon(session="telethon.session", flag=CreateNewSession)
+            try:
+                client.connect()
+            except OSError:
+                # if we cannot connect to telegram - we cannot say what tdata is ok
+                result = False
+        return result
+    
+    
